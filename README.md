@@ -126,4 +126,62 @@ To run the project, you will need to start the backend and frontend servers in s
 
     You can run this script whenever you want to process a new article.
 
+## Architecture Diagram
 
+```mermaid
+graph TD
+    subgraph User
+        A[Browser]
+    end
+
+    subgraph Frontend
+        B[React App]
+    end
+
+    subgraph Backend
+        C[Laravel API]
+        D[PostgreSQL DB]
+    end
+
+    subgraph Processor
+        E[Node.js App]
+    end
+
+    subgraph "External Services"
+        F[Groq API]
+        G[Google Search]
+        H((Internet/Blogs))
+    end
+    
+    subgraph "Initial Scrape (Laravel)"
+        I[php artisan app:scrape-beyond-chats-blogs]
+    end
+
+    A -- "Views Articles" --> B
+    B -- "Fetches Articles (GET /api/articles)" --> C
+    C -- "Reads Articles" --> D
+
+    I -- "Scrapes blogs from" --> H
+    I -- "Stores Articles" --> D
+    
+    E -- "1. Fetches Unprocessed Article\n(GET /api/articles?unprocessed=true)" --> C
+    E -- "2. Searches for related articles" --> G
+    G -- "Returns search results" --> E
+    E -- "3. Scrapes reference articles from" --> H
+    E -- "4. Sends Content to Rewrite" --> F
+    F -- "5. Returns Rewritten Content" --> E
+    E -- "6. Updates Article\n(PUT /api/articles/:id)" --> C
+    C -- "Writes Updated Article" --> D
+```
+
+## How it Works
+
+1.  **Initial Scrape**: The `php artisan app:scrape-beyond-chats-blogs` command is run to scrape blog posts from beyondchats.com and store them in the PostgreSQL database.
+2.  **Viewing Articles**: The user opens the **React frontend** in their browser, which fetches the list of articles from the **Laravel backend** and displays them.
+3.  **AI Processing**:
+    - The **Node.js script** is run manually.
+    - It fetches the latest article from the backend that has not yet been processed.
+    - It performs a Google search for related articles to use as references.
+    - It sends the original article content and the reference material to the **Groq API** to be rewritten.
+    - It receives the rewritten content and updates the article in the database via the **Laravel API**.
+4.  **Displaying Updates**: The React frontend periodically refreshes, showing the newly updated AI content alongside the original.
