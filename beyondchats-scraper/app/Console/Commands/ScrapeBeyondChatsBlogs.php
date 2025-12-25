@@ -196,6 +196,6 @@ class ScrapeBeyondChatsBlogs extends Command
             $this->info("Saved/Updated: {$title}");
         }
 
-        $this->info('Scraping completed successfully 🎉');
+        $this->info('Scraping completed successfully ');
     }
 }

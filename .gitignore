@@ -1,0 +1,15 @@
+# Node
+node_modules/
+npm-debug.log
+.env
+
+# Laravel
+/vendor/
+.env
+/storage/*.key
+/storage/logs/
+/bootstrap/cache/
+
+# OS
+.DS_Store
+Thumbs.db
