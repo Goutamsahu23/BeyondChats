@@ -1,0 +1,14 @@
+.app {
+  max-width: 1400px;
+  margin: auto;
+  padding: 2rem 1rem;
+}
+
+.app-title {
+  text-align: center;
+  font-size: 3rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 3rem;
+  letter-spacing: -1px;
+}
